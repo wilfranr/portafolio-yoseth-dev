@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portafolio Developer - Yoseth Dev</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .font-mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* --- ANIMACIONES AVANZADAS --- */
+
+      /* 1. Fondo de Rejilla Animado */
+      .bg-grid-pattern {
+        background-size: 40px 40px;
+        background-image:
+          linear-gradient(
+            to right,
+            rgba(116, 140, 171, 0.1) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(116, 140, 171, 0.1) 1px,
+            transparent 1px
+          );
+        animation: grid-move 20s linear infinite;
+      }
+      @keyframes grid-move {
+        0% {
+          background-position: 0 0;
+        }
+        100% {
+          background-position: 40px 40px;
+        }
+      }
+
+      /* 2. Orbes Flotantes */
+      @keyframes float-slow {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        33% {
+          transform: translate(30px, -50px) scale(1.1);
+        }
+        66% {
+          transform: translate(-20px, 20px) scale(0.9);
+        }
+      }
+      .animate-float-slow {
+        animation: float-slow 10s ease-in-out infinite;
+      }
+      .animate-float-reverse {
+        animation: float-slow 15s ease-in-out infinite reverse;
+      }
+
+      /* 3. Brillo en Bordes */
+      .card-shine {
+        position: relative;
+        overflow: hidden;
+      }
+      .card-shine::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: 0.5s;
+      }
+      .card-shine:hover::before {
+        left: 100%;
+      }
+
+      /* 4. Scroll Reveal */
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+      }
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* --- ESTILOS DEL MINIJUEGO (Flip Cards) --- */
+      .game-card {
+        perspective: 1000px;
+        cursor: pointer;
+      }
+      .game-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+      }
+      .game-card.flipped .game-card-inner {
+        transform: rotateY(180deg);
+      }
+      .game-card.matched .game-card-inner {
+        transform: rotateY(180deg);
+      }
+      .game-card-front,
+      .game-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.75rem; /* rounded-xl */
+      }
+      /* Cara oculta (Back) - Color sólido o patrón */
+      .game-card-front {
+        /* Tailwind classes handled in HTML usually, but needed for override */
+      }
+      /* Cara visible (Front with icon) - Rotated */
+      .game-card-back {
+        transform: rotateY(180deg);
+      }
+
+      /* Scrollbar */
+      .chat-scroll::-webkit-scrollbar {
+        width: 6px;
+      }
+      .chat-scroll::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .chat-scroll::-webkit-scrollbar-thumb {
+        background-color: #1d2d44;
+        border-radius: 20px;
+      }
+    </style>
+
+    <script>
+      // Configuración Tailwind
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                light: "#f0ebd8", // Cream
+                accent1: "#748cab", // Cool Blue
+                accent2: "#3e5c76", // Deep Teal
+                navy: "#1d2d44", // Navy
+                dark: "#0d1321", // Darkest
+              },
+            },
+            animation: {
+              "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            },
+          },
+        },
+      };
+
+      if (
+        localStorage.theme === "dark" ||
+        (!("theme" in localStorage) &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    </script>
+  </head>
+  <body
+    class="bg-brand-light dark:bg-brand-dark text-brand-dark dark:text-brand-light antialiased selection:bg-brand-navy selection:text-white overflow-x-hidden relative transition-colors duration-300"
+  >
+    <!-- Fondo Global -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+      <div
+        class="absolute inset-0 bg-grid-pattern opacity-60 dark:opacity-30"
+      ></div>
+      <div
+        class="absolute top-0 left-0 w-[500px] h-[500px] bg-brand-accent1/20 dark:bg-brand-navy/30 rounded-full blur-[100px] mix-blend-multiply dark:mix-blend-screen filter animate-float-slow"
+      ></div>
+      <div
+        class="absolute bottom-0 right-0 w-[600px] h-[600px] bg-brand-accent2/20 dark:bg-brand-accent1/10 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen filter animate-float-reverse"
+      ></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav
+      class="fixed w-full bg-brand-light/80 dark:bg-brand-dark/80 backdrop-blur-md shadow-sm z-50 transition-all duration-300 border-b border-brand-accent1/20 dark:border-brand-light/10"
+    >
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+          <div
+            class="flex-shrink-0 flex items-center cursor-pointer group"
+            onclick="scrollToSection('home')"
+          >
+            <span
+              class="text-2xl font-extrabold text-brand-dark dark:text-brand-light tracking-tighter group-hover:text-brand-accent2 dark:group-hover:text-brand-accent1 transition-colors"
+            >
+              &lt; Yoseth Dev /&gt;
+            </span>
+          </div>
+
+          <div class="hidden md:flex items-center space-x-8">
+            <button
+              onclick="scrollToSection('home')"
+              class="nav-btn text-brand-navy dark:text-brand-light font-bold hover:text-brand-accent2"
+            >
+              Home
+            </button>
+            <button
+              onclick="scrollToSection('skills')"
+              class="nav-btn text-brand-dark dark:text-brand-light/80 font-medium hover:text-brand-navy dark:hover:text-white"
+            >
+              Skills
+            </button>
+            <button
+              onclick="scrollToSection('projects')"
+              class="nav-btn text-brand-dark dark:text-brand-light/80 font-medium hover:text-brand-navy dark:hover:text-white"
+            >
+              Proyectos
+            </button>
+            <button
+              onclick="scrollToSection('game')"
+              class="nav-btn text-brand-dark dark:text-brand-light/80 font-medium hover:text-brand-navy dark:hover:text-white flex items-center gap-1"
+            >
+              <i data-lucide="gamepad-2" width="16"></i> Play
+            </button>
+            <button
+              onclick="scrollToSection('contact')"
+              class="px-4 py-2 rounded-full border border-brand-navy dark:border-brand-accent1 text-brand-navy dark:text-brand-accent1 font-medium hover:bg-brand-navy hover:text-white dark:hover:bg-brand-accent1 dark:hover:text-brand-dark transition-all transform hover:scale-105"
+            >
+              Contacto
+            </button>
+
+            <button
+              onclick="toggleTheme()"
+              class="p-2 rounded-full bg-brand-navy/5 dark:bg-brand-light/10 hover:bg-brand-navy/10 dark:hover:bg-brand-light/20 transition-colors text-brand-navy dark:text-brand-light"
+            >
+              <i
+                data-lucide="sun"
+                id="icon-sun"
+                class="hidden dark:block"
+                width="20"
+              ></i>
+              <i
+                data-lucide="moon"
+                id="icon-moon"
+                class="block dark:hidden"
+                width="20"
+              ></i>
+            </button>
+          </div>
+
+          <div class="md:hidden flex items-center space-x-4">
+            <button
+              onclick="toggleTheme()"
+              class="p-2 rounded-full bg-brand-navy/5 dark:bg-brand-light/10 text-brand-navy dark:text-brand-light"
+            >
+              <i data-lucide="sun" class="hidden dark:block" width="20"></i>
+              <i data-lucide="moon" class="block dark:hidden" width="20"></i>
+            </button>
+            <button
+              onclick="toggleMenu()"
+              class="text-brand-dark dark:text-brand-light hover:text-brand-navy focus:outline-none"
+            >
+              <i data-lucide="menu" id="menu-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden bg-brand-light dark:bg-brand-navy border-t border-brand-accent1/30 dark:border-brand-light/10 absolute w-full backdrop-blur-xl"
+      >
+        <div class="px-4 pt-4 pb-6 space-y-2">
+          <button
+            onclick="scrollToSection('home')"
+            class="block w-full text-left px-4 py-3 text-brand-dark dark:text-brand-light hover:bg-brand-accent1/20 rounded-lg"
+          >
+            Home
+          </button>
+          <button
+            onclick="scrollToSection('skills')"
+            class="block w-full text-left px-4 py-3 text-brand-dark dark:text-brand-light hover:bg-brand-accent1/20 rounded-lg"
+          >
+            Skills
+          </button>
+          <button
+            onclick="scrollToSection('projects')"
+            class="block w-full text-left px-4 py-3 text-brand-dark dark:text-brand-light hover:bg-brand-accent1/20 rounded-lg"
+          >
+            Proyectos
+          </button>
+          <button
+            onclick="scrollToSection('game')"
+            class="block w-full text-left px-4 py-3 text-brand-dark dark:text-brand-light hover:bg-brand-accent1/20 rounded-lg"
+          >
+            Minijuego
+          </button>
+          <button
+            onclick="scrollToSection('contact')"
+            class="block w-full text-left px-4 py-3 text-brand-dark dark:text-brand-light hover:bg-brand-accent1/20 rounded-lg"
+          >
+            Contacto
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section
+      id="home"
+      class="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between min-h-[90vh] z-10"
+    >
+      <div class="md:w-1/2 space-y-8 text-center md:text-left reveal active">
+        <div
+          class="inline-flex items-center px-4 py-2 rounded-full bg-brand-navy/5 dark:bg-brand-light/10 border border-brand-navy/10 dark:border-brand-light/10 backdrop-blur-sm transition-colors"
+        >
+          <span class="flex h-2 w-2 relative mr-3">
+            <span
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent2 dark:bg-brand-accent1 opacity-75"
+            ></span>
+            <span
+              class="relative inline-flex rounded-full h-2 w-2 bg-brand-navy dark:bg-brand-accent1"
+            ></span>
+          </span>
+          <span
+            class="text-brand-navy dark:text-brand-light text-sm font-bold tracking-wide"
+            >Disponible para trabajar con Laravel, Angular, Express.js,
+            Javascript, Typescript, Databases SQL, NoSQL</span
+          >
+        </div>
+
+        <h1
+          class="text-5xl md:text-7xl font-extrabold text-brand-dark dark:text-brand-light tracking-tight leading-[1.1]"
+        >
+          Arquitectura <br />
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-brand-navy via-brand-accent2 to-brand-accent1 dark:from-brand-accent1 dark:to-brand-light animate-gradient-x"
+          >
+            Digital Sólida
+          </span>
+        </h1>
+
+        <p
+          class="text-xl text-brand-dark/80 dark:text-brand-light/70 max-w-lg mx-auto md:mx-0 font-medium leading-relaxed"
+        >
+          Transformo ideas complejas en sistemas eficientes. Especialista en
+          <span class="text-brand-navy dark:text-brand-accent1 font-bold"
+            >Backend con Laravel</span
+          >
+          y experiencias interactivas modernas.
+        </p>
+
+        <div
+          class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start pt-4"
+        >
+          <button
+            onclick="scrollToSection('projects')"
+            class="card-shine px-8 py-4 bg-brand-navy dark:bg-brand-light text-white dark:text-brand-navy rounded-xl hover:bg-brand-dark dark:hover:bg-white transition shadow-xl hover:shadow-brand-navy/40 font-bold tracking-wide transform hover:-translate-y-1"
+          >
+            Ver Portafolio
+          </button>
+          <button
+            onclick="scrollToSection('contact')"
+            class="px-8 py-4 bg-transparent text-brand-navy dark:text-brand-light border-2 border-brand-navy/20 dark:border-brand-light/20 rounded-xl hover:border-brand-navy dark:hover:border-brand-light hover:bg-brand-navy/5 dark:hover:bg-brand-light/5 transition font-bold backdrop-blur-sm"
+          >
+            Contactar Ahora
+          </button>
+        </div>
+
+        <div
+          class="flex items-center space-x-6 justify-center md:justify-start pt-6 text-brand-accent2 dark:text-brand-accent1"
+        >
+          <span
+            class="text-sm font-mono text-brand-accent1 dark:text-brand-light/50"
+            >Social:</span
+          >
+          <div
+            class="h-px w-8 bg-brand-accent1/30 dark:bg-brand-light/20"
+          ></div>
+          <a
+            href="#"
+            class="hover:text-brand-navy dark:hover:text-white hover:scale-125 transition-all duration-300"
+            ><i data-lucide="github" width="24"></i
+          ></a>
+          <a
+            href="#"
+            class="hover:text-blue-700 hover:scale-125 transition-all duration-300"
+            ><i data-lucide="linkedin" width="24"></i
+          ></a>
+          <a
+            href="#"
+            class="hover:text-brand-navy dark:hover:text-white hover:scale-125 transition-all duration-300"
+            ><i data-lucide="mail" width="24"></i
+          ></a>
+        </div>
+      </div>
+
+      <div
+        class="md:w-1/2 mt-16 md:mt-0 relative perspective-1000 reveal delay-200"
+      >
+        <div
+          class="relative z-10 rounded-2xl bg-[#0d1321] shadow-2xl p-6 transform rotate-y-12 hover:rotate-y-0 transition-transform duration-700 border border-brand-accent1/20 dark:border-brand-light/10 group"
+        >
+          <div
+            class="flex items-center justify-between mb-6 border-b border-white/10 pb-4"
+          >
+            <div class="flex space-x-2">
+              <div
+                class="w-3 h-3 rounded-full bg-red-500 shadow-lg shadow-red-500/20"
+              ></div>
+              <div
+                class="w-3 h-3 rounded-full bg-yellow-500 shadow-lg shadow-yellow-500/20"
+              ></div>
+              <div
+                class="w-3 h-3 rounded-full bg-green-500 shadow-lg shadow-green-500/20"
+              ></div>
+            </div>
+            <div class="text-xs text-white/30 font-mono">
+              App\Services\Architect.php
+            </div>
+          </div>
+          <div
+            class="font-mono text-sm text-gray-300 space-y-3 leading-relaxed"
+          >
+            <div class="flex">
+              <span class="text-white/20 w-6 select-none">1</span>
+              <p>
+                <span class="text-brand-accent1">namespace</span>
+                <span class="text-brand-light">App\Core;</span>
+              </p>
+            </div>
+            <div class="flex">
+              <span class="text-white/20 w-6 select-none">2</span>
+              <p>
+                <span class="text-brand-accent1">class</span>
+                <span class="text-yellow-400">FullStackDev</span>
+                <span class="text-brand-accent1">extends</span>
+                <span class="text-yellow-400">Human</span> {
+              </p>
+            </div>
+            <div class="flex">
+              <span class="text-white/20 w-6 select-none">3</span>
+              <p class="pl-4">
+                <span class="text-brand-accent2">protected</span>
+                <span class="text-purple-400">$stack</span> = [
+              </p>
+            </div>
+            <div class="flex">
+              <span class="text-white/20 w-6 select-none">4</span>
+              <p class="pl-8 text-green-400">'Laravel 12', 'React', 'Docker'</p>
+            </div>
+            <div class="flex">
+              <span class="text-white/20 w-6 select-none">5</span>
+              <p class="pl-4">];</p>
+            </div>
+            <div class="flex">
+              <span class="text-white/20 w-6 select-none">6</span>
+              <p class="pl-4">
+                <span class="text-brand-accent1">public function</span>
+                <span class="text-blue-400">deploy</span>() {
+              </p>
+            </div>
+            <div class="flex">
+              <span class="text-white/20 w-6 select-none">7</span>
+              <p class="pl-8">
+                <span class="text-brand-accent1">return</span>
+                <span class="text-brand-accent1">new</span>
+                <span class="text-yellow-400">Innovation</span>();
+              </p>
+            </div>
+            <div class="flex">
+              <span class="text-white/20 w-6 select-none">8</span>
+              <p class="pl-4">}</p>
+            </div>
+            <div class="flex">
+              <span class="text-white/20 w-6 select-none">9</span>
+              <p>}</p>
+            </div>
+          </div>
+          <div
+            class="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
+          ></div>
+        </div>
+        <div
+          class="absolute -z-10 top-10 -right-10 w-72 h-72 bg-brand-accent1 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[80px] opacity-40 dark:opacity-20 animate-float-slow"
+        ></div>
+        <div
+          class="absolute -z-10 -bottom-8 -left-10 w-72 h-72 bg-brand-accent2 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[80px] opacity-40 dark:opacity-20 animate-float-reverse"
+        ></div>
+      </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-24 relative z-10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-20 reveal">
+          <span
+            class="text-brand-accent2 dark:text-brand-accent1 font-bold tracking-wider uppercase text-sm"
+            >Expertise</span
+          >
+          <h2
+            class="text-4xl font-extrabold text-brand-dark dark:text-brand-light mt-2"
+          >
+            Stack Tecnológico
+          </h2>
+          <div
+            class="w-24 h-1.5 bg-gradient-to-r from-brand-navy to-brand-accent1 dark:from-brand-accent1 dark:to-brand-light mx-auto mt-6 rounded-full"
+          ></div>
+        </div>
+        <div
+          id="skills-container"
+          class="grid grid-cols-2 md:grid-cols-3 gap-8"
+        ></div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-24 relative z-10">
+      <div
+        class="absolute inset-0 bg-brand-navy/5 dark:bg-white/5 -skew-y-3 transform origin-top-left z-0 h-full w-full"
+      ></div>
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div
+          class="flex flex-col md:flex-row justify-between items-end mb-16 reveal"
+        >
+          <div class="text-center md:text-left mb-6 md:mb-0">
+            <span
+              class="text-brand-accent2 dark:text-brand-accent1 font-bold tracking-wider uppercase text-sm"
+              >Portafolio</span
+            >
+            <h2
+              class="text-4xl font-extrabold text-brand-dark dark:text-brand-light mt-2"
+            >
+              Proyectos Recientes
+            </h2>
+            <p
+              class="mt-4 text-brand-dark/60 dark:text-brand-light/60 max-w-xl"
+            >
+              Soluciones reales implementadas con estándares de industria.
+            </p>
+          </div>
+          <a
+            href="#"
+            class="group inline-flex items-center text-brand-navy dark:text-brand-light font-bold hover:text-brand-accent2 dark:hover:text-brand-accent1 transition border-b-2 border-transparent hover:border-brand-accent2 dark:hover:border-brand-accent1 pb-1"
+          >
+            Ver GitHub Completo
+            <i
+              data-lucide="arrow-right"
+              class="ml-2 group-hover:translate-x-1 transition-transform"
+              width="20"
+            ></i>
+          </a>
+        </div>
+        <div
+          id="projects-container"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        ></div>
+      </div>
+    </section>
+
+    <!-- MINIJUEGO: MEMORY MATCH -->
+    <section
+      id="game"
+      class="py-24 relative z-10 bg-brand-light/50 dark:bg-brand-navy/20 border-t border-brand-accent1/10 dark:border-brand-light/5"
+    >
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 reveal">
+          <span
+            class="inline-flex items-center gap-2 text-brand-accent2 dark:text-brand-accent1 font-bold tracking-wider uppercase text-sm"
+          >
+            <i data-lucide="gamepad-2" width="16"></i> Break Time
+          </span>
+          <h2
+            class="text-3xl font-extrabold text-brand-dark dark:text-brand-light mt-2"
+          >
+            Zona de Desconexión
+          </h2>
+          <p class="mt-4 text-brand-dark/60 dark:text-brand-light/60">
+            Encuentra los pares de tecnologías de mi stack.
+          </p>
+        </div>
+
+        <div class="flex flex-col items-center">
+          <div
+            class="flex justify-between w-full max-w-md mb-4 text-sm font-bold text-brand-navy dark:text-brand-light"
+          >
+            <span id="game-moves">Movimientos: 0</span>
+            <button
+              onclick="restartGame()"
+              class="text-brand-accent2 hover:text-brand-navy dark:hover:text-white transition flex items-center gap-1"
+            >
+              <i data-lucide="rotate-ccw" width="14"></i> Reiniciar
+            </button>
+          </div>
+
+          <div
+            id="game-grid"
+            class="grid grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4 w-full max-w-md mx-auto perspective-1000"
+          >
+            <!-- Cards will be injected here -->
+          </div>
+
+          <div
+            id="game-win"
+            class="hidden mt-6 p-4 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-xl border border-green-200 dark:border-green-800 animate-in fade-in zoom-in"
+          >
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-green-200 dark:bg-green-800 rounded-full">
+                <i data-lucide="trophy" width="20"></i>
+              </div>
+              <div>
+                <p class="font-bold">¡Stack Completado!</p>
+                <p class="text-xs opacity-80">
+                  Dominas las tecnologías tanto como yo.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section
+      id="contact"
+      class="py-24 relative z-10 bg-white/40 dark:bg-brand-navy/20 backdrop-blur-sm"
+    >
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="bg-white dark:bg-brand-navy rounded-3xl shadow-2xl border border-brand-accent1/20 dark:border-brand-light/10 overflow-hidden flex flex-col md:flex-row reveal"
+        >
+          <div
+            class="bg-brand-navy dark:bg-brand-dark p-10 md:w-2/5 text-white flex flex-col justify-between relative overflow-hidden"
+          >
+            <div class="relative z-10">
+              <h3 class="text-2xl font-bold mb-2">Hablemos</h3>
+              <p class="text-brand-light/80 text-sm leading-relaxed mb-8">
+                ¿Listo para lanzar tu próximo proyecto? Estoy a un mensaje de
+                distancia.
+              </p>
+              <div class="space-y-4">
+                <div class="flex items-center space-x-3 text-sm">
+                  <div class="p-2 bg-white/10 rounded-lg">
+                    <i data-lucide="mail" width="16"></i>
+                  </div>
+                  <span>wilfranr@gmail.com</span>
+                </div>
+                <div class="flex items-center space-x-3 text-sm">
+                  <div class="p-2 bg-white/10 rounded-lg">
+                    <i data-lucide="map-pin" width="16"></i>
+                  </div>
+                  <span>Remoto / Global</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-12 relative z-10">
+              <p class="text-xs text-brand-light/40">© 2025 Yoseth Dev</p>
+            </div>
+            <div
+              class="absolute top-0 right-0 w-32 h-32 bg-brand-accent2 rounded-full mix-blend-overlay filter blur-3xl opacity-50 transform translate-x-1/2 -translate-y-1/2"
+            ></div>
+            <div
+              class="absolute bottom-0 left-0 w-32 h-32 bg-brand-accent1 rounded-full mix-blend-overlay filter blur-3xl opacity-50 transform -translate-x-1/2 translate-y-1/2"
+            ></div>
+          </div>
+          <div class="p-10 md:w-3/5 bg-brand-light/50 dark:bg-brand-navy/30">
+            <form
+              class="space-y-5"
+              onsubmit="event.preventDefault(); alert('Mensaje enviado (simulación)');"
+            >
+              <div class="grid grid-cols-1 gap-5">
+                <div>
+                  <label
+                    for="email"
+                    class="block text-xs font-bold text-brand-navy dark:text-brand-light uppercase tracking-wide mb-1"
+                    >Tu Email</label
+                  >
+                  <input
+                    type="email"
+                    id="email"
+                    class="w-full px-4 py-3 bg-white dark:bg-brand-dark border border-brand-accent1/30 dark:border-brand-light/10 rounded-xl focus:ring-2 focus:ring-brand-navy dark:focus:ring-brand-light focus:border-brand-navy outline-none transition text-brand-dark dark:text-brand-light text-sm"
+                    placeholder="hola@ejemplo.com"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  for="message"
+                  class="block text-xs font-bold text-brand-navy dark:text-brand-light uppercase tracking-wide mb-1"
+                  >¿Cómo puedo ayudarte?</label
+                >
+                <div class="relative group">
+                  <textarea
+                    id="message"
+                    rows="4"
+                    class="w-full px-4 py-3 bg-white dark:bg-brand-dark border border-brand-accent1/30 dark:border-brand-light/10 rounded-xl focus:ring-2 focus:ring-brand-navy dark:focus:ring-brand-light focus:border-brand-navy outline-none transition resize-none text-brand-dark dark:text-brand-light text-sm"
+                    placeholder="Describe brevemente tu idea..."
+                  ></textarea>
+                  <button
+                    type="button"
+                    onclick="handleMagicDraft()"
+                    id="magic-btn"
+                    class="absolute bottom-3 right-3 flex items-center space-x-2 px-3 py-1.5 bg-brand-light dark:bg-brand-navy border border-brand-accent1/30 dark:border-brand-light/10 text-brand-navy dark:text-brand-light text-xs font-bold rounded-lg hover:bg-white dark:hover:bg-brand-dark hover:shadow-md transition transform active:scale-95 group-focus-within:opacity-100 opacity-70"
+                  >
+                    <i
+                      data-lucide="sparkles"
+                      width="12"
+                      id="magic-icon"
+                      class="text-brand-accent2 dark:text-brand-accent1"
+                    ></i
+                    ><span id="magic-text">Mejorar con IA</span>
+                  </button>
+                </div>
+              </div>
+              <button
+                type="submit"
+                class="w-full py-3 bg-brand-navy dark:bg-brand-light text-white dark:text-brand-navy font-bold rounded-xl hover:bg-brand-dark dark:hover:bg-white transition shadow-lg hover:shadow-brand-navy/30 transform active:scale-[0.98] flex justify-center items-center group"
+              >
+                Enviar Propuesta
+                <i
+                  data-lucide="send"
+                  width="16"
+                  class="ml-2 group-hover:translate-x-1 transition-transform"
+                ></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chat Widget -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+      <div
+        id="chat-window"
+        class="hidden mb-4 w-80 sm:w-96 bg-white/95 dark:bg-brand-navy/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-brand-accent1/20 dark:border-brand-light/10 overflow-hidden flex flex-col transition-all duration-300 transform origin-bottom-right scale-100 animate-in fade-in slide-in-from-bottom-4"
+      >
+        <div
+          class="bg-brand-navy dark:bg-brand-dark p-4 text-white flex justify-between items-center bg-grid-pattern relative overflow-hidden"
+        >
+          <div class="relative z-10 flex items-center space-x-2">
+            <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+            <h3 class="font-bold text-sm tracking-wide">Asistente IA</h3>
+          </div>
+          <button
+            onclick="toggleChat()"
+            class="relative z-10 hover:bg-white/10 p-1 rounded transition"
+          >
+            <i data-lucide="x" width="16"></i>
+          </button>
+        </div>
+        <div
+          id="chat-messages"
+          class="h-80 overflow-y-auto p-4 bg-slate-50 dark:bg-brand-dark/50 space-y-3 chat-scroll"
+        >
+          <div class="flex justify-start">
+            <div
+              class="max-w-[85%] p-3 rounded-2xl rounded-tl-none text-sm bg-white dark:bg-brand-navy text-brand-dark dark:text-brand-light border border-brand-accent1/10 dark:border-brand-light/10 shadow-sm"
+            >
+              👋 Hola, soy la IA de Yoseth. Conozco todo sobre su experiencia en
+              <strong>Desarrollo Fullstack</strong>. ¿Qué necesitas saber?
+            </div>
+          </div>
+        </div>
+        <div
+          class="p-3 bg-white dark:bg-brand-navy border-t border-slate-100 dark:border-brand-light/10"
+        >
+          <div class="flex space-x-2">
+            <input
+              type="text"
+              id="chat-input"
+              placeholder="Escribe aquí..."
+              class="flex-1 px-4 py-2 bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-light/10 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-navy dark:focus:ring-brand-light text-sm dark:text-brand-light"
+              onkeypress="handleEnter(event)"
+            />
+            <button
+              onclick="handleSendChat()"
+              id="send-btn"
+              class="p-2 bg-brand-navy dark:bg-brand-light text-white dark:text-brand-navy rounded-full hover:bg-brand-dark dark:hover:bg-white transition shadow-md"
+            >
+              <i data-lucide="arrow-up" width="18"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <button
+        onclick="toggleChat()"
+        class="group relative flex items-center justify-center w-14 h-14 bg-brand-navy dark:bg-brand-light text-white dark:text-brand-navy rounded-full shadow-2xl hover:bg-brand-dark dark:hover:bg-white hover:scale-105 transition-all duration-300 focus:outline-none z-50"
+      >
+        <i data-lucide="message-square" width="24" id="chat-toggle-icon"></i>
+        <span id="chat-notification" class="absolute top-0 right-0 flex h-3 w-3"
+          ><span
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent2 dark:bg-brand-navy opacity-75"
+          ></span
+          ><span
+            class="relative inline-flex rounded-full h-3 w-3 bg-brand-accent2 dark:bg-brand-navy border-2 border-brand-navy dark:border-brand-light"
+          ></span
+        ></span>
+      </button>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+      function toggleTheme() {
+        if (document.documentElement.classList.contains("dark")) {
+          document.documentElement.classList.remove("dark");
+          localStorage.theme = "light";
+        } else {
+          document.documentElement.classList.add("dark");
+          localStorage.theme = "dark";
+        }
+      }
+
+      // --- DATA ---
+      const personalInfo = {
+        name: "Yoseth Dev",
+        role: "Desarrollador Full Stack & Arquitecto Laravel",
+        bio: "Especializado en construir aplicaciones web robustas y escalables con Laravel 12 y React.",
+        email: "contacto@ejemplo.com",
+      };
+      const skillsData = [
+        {
+          name: "Laravel 12",
+          icon: "server",
+          level: "Avanzado",
+          category: "Backend",
+        },
+        {
+          name: "PHP 8.3",
+          icon: "code-2",
+          level: "Avanzado",
+          category: "Lenguaje",
+        },
+        {
+          name: "React / Vue",
+          icon: "terminal",
+          level: "Intermedio",
+          category: "Frontend",
+        },
+        {
+          name: "MySQL",
+          icon: "database",
+          level: "Avanzado",
+          category: "Database",
+        },
+        {
+          name: "Docker",
+          icon: "container",
+          level: "Intermedio",
+          category: "DevOps",
+        },
+        {
+          name: "Tailwind",
+          icon: "layout",
+          level: "Avanzado",
+          category: "Design",
+        },
+      ];
+      const projectsData = [
+        {
+          title: "Sistema ERP SaaS",
+          description:
+            "Arquitectura multi-tenant con Laravel 12. Gestión de facturación electrónica y roles granulares con Jetstream.",
+          tags: ["Laravel 12", "PostgreSQL", "Redis", "Vue"],
+          repo: "#",
+          link: "#",
+        },
+        {
+          title: "Analytics Dashboard",
+          description:
+            "Panel de control en tiempo real para e-commerce. Procesa millones de eventos diarios usando colas de Laravel.",
+          tags: ["React", "Tailwind", "AWS Lambda"],
+          repo: "#",
+          link: "#",
+        },
+        {
+          title: "Auth Microservice",
+          description:
+            "Servicio de autenticación centralizado JWT. Dockerizado y orquestado con Kubernetes para alta disponibilidad.",
+          tags: ["PHP 8.3", "Docker", "K8s"],
+          repo: "#",
+          link: "#",
+        },
+      ];
+
+      // --- GEMINI API ---
+      const apiKey = "AIzaSyCUKGWnEUT5NmD1fQgaFSw10HdVJF3117c";
+      async function callGemini(prompt, systemInstruction = "") {
+        try {
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] },
+              }),
+            },
+          );
+          if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
+          const data = await response.json();
+          return (
+            data.candidates?.[0]?.content?.parts?.[0]?.text ||
+            "Lo siento, no pude generar una respuesta."
+          );
+        } catch (error) {
+          console.error("Error calling Gemini:", error);
+          return "Hubo un error al conectar con la IA.";
+        }
+      }
+
+      // --- RENDERERS ---
+      function renderSkills() {
+        const container = document.getElementById("skills-container");
+        container.innerHTML = skillsData
+          .map(
+            (skill) => `
+                <div class="card-shine p-6 bg-white dark:bg-brand-navy rounded-2xl border border-brand-accent1/10 dark:border-brand-light/10 hover:border-brand-accent1/40 dark:hover:border-brand-light/30 hover:shadow-lg transition-all group relative overflow-hidden reveal">
+                    <div class="flex items-center space-x-4 mb-4 relative z-10">
+                        <div class="p-3 bg-brand-light dark:bg-brand-dark text-brand-navy dark:text-brand-light rounded-xl group-hover:bg-brand-navy dark:group-hover:bg-brand-light group-hover:text-white dark:group-hover:text-brand-navy transition-colors duration-300">
+                            <i data-lucide="${skill.icon}" width="24"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-brand-dark dark:text-brand-light text-lg">${skill.name}</h3>
+                            <p class="text-xs text-brand-accent2 dark:text-brand-accent1 uppercase tracking-wider font-semibold">${skill.category}</p>
+                        </div>
+                    </div>
+                    <div class="w-full bg-brand-light dark:bg-brand-dark rounded-full h-2 mt-2 overflow-hidden">
+                        <div class="bg-gradient-to-r from-brand-navy to-brand-accent2 dark:from-brand-light dark:to-brand-accent1 h-2 rounded-full transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 ease-out" style="width: ${skill.level === "Avanzado" ? "95%" : "70%"}"></div>
+                        <div class="bg-brand-accent1/30 dark:bg-brand-light/20 h-2 rounded-full -mt-2" style="width: ${skill.level === "Avanzado" ? "95%" : "70%"}"></div>
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+      }
+
+      function renderProjects() {
+        const container = document.getElementById("projects-container");
+        container.innerHTML = projectsData
+          .map(
+            (project, index) => `
+                <div class="bg-white dark:bg-brand-navy rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full border border-brand-accent1/10 dark:border-brand-light/10 group reveal" style="transition-delay: ${index * 100}ms">
+                    <div class="h-40 bg-gradient-to-br from-brand-navy to-brand-dark relative overflow-hidden">
+                        <div class="absolute inset-0 bg-grid-pattern opacity-30"></div>
+                        <div class="absolute bottom-4 left-4 p-2 bg-white/10 backdrop-blur-md rounded-lg border border-white/20 text-white"><i data-lucide="layout-grid" width="24"></i></div>
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <div class="flex justify-between items-start mb-3">
+                             <h3 class="text-xl font-extrabold text-brand-dark dark:text-brand-light group-hover:text-brand-navy dark:group-hover:text-brand-accent1 transition-colors">${project.title}</h3>
+                             <div class="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <a href="${project.repo}" class="text-brand-dark/50 dark:text-brand-light/50 hover:text-brand-navy dark:hover:text-white transition"><i data-lucide="github" width="18"></i></a>
+                                <a href="${project.link}" class="text-brand-dark/50 dark:text-brand-light/50 hover:text-brand-accent2 dark:hover:text-brand-accent1 transition"><i data-lucide="external-link" width="18"></i></a>
+                             </div>
+                        </div>
+                        <p class="text-brand-dark/70 dark:text-brand-light/70 mb-6 text-sm leading-relaxed">${project.description}</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            ${project.tags.map((tag) => `<span class="px-2 py-1 bg-brand-light dark:bg-brand-dark text-brand-navy dark:text-brand-light text-xs font-bold rounded-md border border-brand-navy/5 dark:border-brand-light/10">${tag}</span>`).join("")}
+                        </div>
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+      }
+
+      // --- GAME LOGIC (MEMORY MATCH) ---
+      let gameCards = [];
+      let hasFlippedCard = false;
+      let lockBoard = false;
+      let firstCard, secondCard;
+      let moves = 0;
+      let matches = 0;
+
+      const gameIcons = [
+        "server",
+        "code-2",
+        "terminal",
+        "database",
+        "container",
+        "layout",
+      ];
+
+      function initGame() {
+        const grid = document.getElementById("game-grid");
+        grid.innerHTML = "";
+        moves = 0;
+        matches = 0;
+        document.getElementById("game-moves").innerText = `Movimientos: 0`;
+        document.getElementById("game-win").classList.add("hidden");
+
+        // Double and shuffle
+        let cards = [...gameIcons, ...gameIcons];
+        cards.sort(() => 0.5 - Math.random());
+
+        cards.forEach((icon) => {
+          const card = document.createElement("div");
+          card.classList.add("game-card", "h-24", "w-full");
+          card.dataset.framework = icon;
+
+          card.innerHTML = `
+                    <div class="game-card-inner">
+                        <div class="game-card-front bg-white dark:bg-brand-navy border-2 border-brand-accent1/20 dark:border-brand-light/10 shadow-sm text-brand-accent2">
+                            <i data-lucide="aperture" width="32" class="opacity-30"></i>
+                        </div>
+                        <div class="game-card-back bg-brand-accent2 dark:bg-brand-accent1 text-white border-2 border-brand-accent2 dark:border-brand-accent1 shadow-md">
+                            <i data-lucide="${icon}" width="32"></i>
+                        </div>
+                    </div>
+                `;
+
+          card.addEventListener("click", flipCard);
+          grid.appendChild(card);
+        });
+        lucide.createIcons();
+      }
+
+      function flipCard() {
+        if (lockBoard) return;
+        if (this === firstCard) return;
+
+        this.classList.add("flipped");
+
+        if (!hasFlippedCard) {
+          hasFlippedCard = true;
+          firstCard = this;
+          return;
+        }
+
+        secondCard = this;
+        incrementMoves();
+        checkForMatch();
+      }
+
+      function checkForMatch() {
+        let isMatch =
+          firstCard.dataset.framework === secondCard.dataset.framework;
+        isMatch ? disableCards() : unflipCards();
+      }
+
+      function disableCards() {
+        firstCard.removeEventListener("click", flipCard);
+        secondCard.removeEventListener("click", flipCard);
+        firstCard.classList.add("matched");
+        secondCard.classList.add("matched");
+        resetBoard();
+        matches++;
+        if (matches === gameIcons.length) {
+          setTimeout(() => {
+            document.getElementById("game-win").classList.remove("hidden");
+          }, 500);
+        }
+      }
+
+      function unflipCards() {
+        lockBoard = true;
+        setTimeout(() => {
+          firstCard.classList.remove("flipped");
+          secondCard.classList.remove("flipped");
+          resetBoard();
+        }, 1000);
+      }
+
+      function resetBoard() {
+        [hasFlippedCard, lockBoard] = [false, false];
+        [firstCard, secondCard] = [null, null];
+      }
+
+      function incrementMoves() {
+        moves++;
+        document.getElementById("game-moves").innerText =
+          `Movimientos: ${moves}`;
+      }
+
+      function restartGame() {
+        const grid = document.getElementById("game-grid");
+        // Simple visual reset animation
+        grid.style.opacity = "0";
+        setTimeout(() => {
+          initGame();
+          grid.style.opacity = "1";
+        }, 300);
+      }
+
+      // --- COMMON LOGIC ---
+      function handleScrollReveal() {
+        document.querySelectorAll(".reveal").forEach((reveal) => {
+          if (reveal.getBoundingClientRect().top < window.innerHeight - 100)
+            reveal.classList.add("active");
+        });
+      }
+
+      function scrollToSection(id) {
+        document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+        document.getElementById("mobile-menu").classList.add("hidden");
+      }
+      function toggleMenu() {
+        document.getElementById("mobile-menu").classList.toggle("hidden");
+      }
+
+      let chatOpen = false;
+      function toggleChat() {
+        chatOpen = !chatOpen;
+        const win = document.getElementById("chat-window");
+        const notif = document.getElementById("chat-notification");
+        const toggleIcon = document.getElementById("chat-toggle-icon");
+        if (chatOpen) {
+          win.classList.remove("hidden");
+          notif.classList.add("hidden");
+          toggleIcon.parentElement.innerHTML =
+            '<i data-lucide="x" width="24"></i>';
+        } else {
+          win.classList.add("hidden");
+          notif.classList.remove("hidden");
+          document.querySelector(".fixed.bottom-6 > button").innerHTML =
+            `<i data-lucide="message-square" width="24" id="chat-toggle-icon"></i><span id="chat-notification" class="absolute top-0 right-0 flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent2 dark:bg-brand-navy opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-brand-accent2 dark:bg-brand-navy border-2 border-brand-navy dark:border-brand-light"></span></span>`;
+        }
+        lucide.createIcons();
+      }
+
+      function addMessage(text, role) {
+        const container = document.getElementById("chat-messages");
+        const div = document.createElement("div");
+        div.className = `flex ${role === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2`;
+        div.innerHTML = `<div class="max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${role === "user" ? "bg-brand-navy dark:bg-brand-light text-white dark:text-brand-navy rounded-br-none" : "bg-white dark:bg-brand-navy text-brand-dark dark:text-brand-light border border-brand-accent1/10 dark:border-brand-light/10 rounded-tl-none"}">${text}</div>`;
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+      }
+
+      function handleEnter(e) {
+        if (e.key === "Enter") handleSendChat();
+      }
+      async function handleSendChat() {
+        const input = document.getElementById("chat-input");
+        const text = input.value.trim();
+        if (!text) return;
+        addMessage(text, "user");
+        input.value = "";
+        const container = document.getElementById("chat-messages");
+        const loadingDiv = document.createElement("div");
+        loadingDiv.id = "chat-loading";
+        loadingDiv.className = "flex justify-start";
+        loadingDiv.innerHTML = `<div class="bg-white dark:bg-brand-navy p-3 rounded-2xl rounded-tl-none border border-slate-100 dark:border-brand-light/10 shadow-sm text-brand-navy dark:text-brand-light"><i data-lucide="loader-2" class="animate-spin" width="16"></i></div>`;
+        container.appendChild(loadingDiv);
+        lucide.createIcons();
+        container.scrollTop = container.scrollHeight;
+        const contextData = JSON.stringify({
+          personalInfo,
+          skillsData,
+          projectsData,
+        });
+        const systemPrompt = `Eres un asistente útil y profesional para el portafolio de Yoseth Dev. Stack: Laravel 12, PHP 8.3, React. Responde brevemente en español. CONTEXTO: ${contextData}`;
+        const reply = await callGemini(text, systemPrompt);
+        document.getElementById("chat-loading").remove();
+        addMessage(reply.replace(/\*\*/g, ""), "assistant");
+      }
+
+      async function handleMagicDraft() {
+        const textarea = document.getElementById("message");
+        const btnText = document.getElementById("magic-text");
+        const icon = document.getElementById("magic-icon");
+        const userText = textarea.value.trim();
+        if (!userText) {
+          alert("Escribe una idea primero.");
+          return;
+        }
+        btnText.innerText = "Pensando...";
+        icon.setAttribute("data-lucide", "loader-2");
+        icon.classList.add("animate-spin");
+        lucide.createIcons();
+        const systemInstruction = `Reescribe este mensaje como un correo de contacto profesional para contratar a un desarrollador Laravel. Sé breve.`;
+        const refined = await callGemini(userText, systemInstruction);
+        textarea.value = refined;
+        btnText.innerText = "Mejorar con IA";
+        icon.setAttribute("data-lucide", "sparkles");
+        icon.classList.remove("animate-spin");
+        lucide.createIcons();
+      }
+
+      window.onload = function () {
+        renderSkills();
+        renderProjects();
+        initGame(); // Init Minigame
+        lucide.createIcons();
+        window.addEventListener("scroll", handleScrollReveal);
+        handleScrollReveal();
+      };
+    </script>
+  </body>
+</html>
