@@ -144,7 +144,7 @@
       }
       /* Cara oculta (Back) - Color sólido o patrón */
       .game-card-front {
-        /* Tailwind classes handled in HTML usually, but needed for override */
+        background-color: inherit;
       }
       /* Cara visible (Front with icon) - Rotated */
       .game-card-back {
@@ -357,8 +357,8 @@
           </span>
           <span
             class="text-brand-navy dark:text-brand-light text-sm font-bold tracking-wide"
-            >Disponible para trabajar con Laravel, Angular, Express.js,
-            Javascript, Typescript, Databases SQL, NoSQL</span
+            >Disponible para trabajar con PHP, Laravel, Express.js, Python,
+            Angular, Flutter, Databases SQL, NoSQL</span
           >
         </div>
 
@@ -378,9 +378,9 @@
         >
           Transformo ideas complejas en sistemas eficientes. Especialista en
           <span class="text-brand-navy dark:text-brand-accent1 font-bold"
-            >Backend con Laravel</span
+            >Backend (PHP, Laravel, Express, Python)</span
           >
-          y experiencias interactivas modernas.
+          y desarrollo Full Stack con Angular y Flutter.
         </p>
 
         <div
@@ -480,7 +480,7 @@
             </div>
             <div class="flex">
               <span class="text-white/20 w-6 select-none">4</span>
-              <p class="pl-8 text-green-400">'Laravel 12', 'React', 'Docker'</p>
+              <p class="pl-8 text-green-400">'PHP', 'Laravel', 'Express', 'Python', 'Angular', 'Flutter'</p>
             </div>
             <div class="flex">
               <span class="text-white/20 w-6 select-none">5</span>
@@ -847,70 +847,70 @@
       // --- DATA ---
       const personalInfo = {
         name: "Yoseth Dev",
-        role: "Desarrollador Full Stack & Arquitecto Laravel",
-        bio: "Especializado en construir aplicaciones web robustas y escalables con Laravel 12 y React.",
-        email: "contacto@ejemplo.com",
+        role: "Desarrollador Full Stack & Arquitecto de Software",
+        bio: "Especializado en construir aplicaciones robustas y escalables con PHP, Laravel, Express.js, Python, Angular y Flutter.",
+        email: "wilfranr@gmail.com",
       };
       const skillsData = [
         {
-          name: "Laravel 12",
-          icon: "server",
-          level: "Avanzado",
-          category: "Backend",
-        },
-        {
-          name: "PHP 8.3",
+          name: "PHP",
           icon: "code-2",
           level: "Avanzado",
           category: "Lenguaje",
         },
         {
-          name: "React / Vue",
+          name: "Laravel",
+          icon: "server",
+          level: "Avanzado",
+          category: "Backend",
+        },
+        {
+          name: "Express.js",
           icon: "terminal",
-          level: "Intermedio",
+          level: "Avanzado",
+          category: "Backend",
+        },
+        {
+          name: "Python",
+          icon: "code-2",
+          level: "Avanzado",
+          category: "Lenguaje",
+        },
+        {
+          name: "Angular",
+          icon: "layout",
+          level: "Avanzado",
           category: "Frontend",
         },
         {
-          name: "MySQL",
-          icon: "database",
+          name: "Flutter",
+          icon: "smartphone",
           level: "Avanzado",
-          category: "Database",
-        },
-        {
-          name: "Docker",
-          icon: "container",
-          level: "Intermedio",
-          category: "DevOps",
-        },
-        {
-          name: "Tailwind",
-          icon: "layout",
-          level: "Avanzado",
-          category: "Design",
+          category: "Mobile",
         },
       ];
       const projectsData = [
         {
           title: "Sistema ERP SaaS",
           description:
-            "Arquitectura multi-tenant con Laravel 12. Gestión de facturación electrónica y roles granulares con Jetstream.",
-          tags: ["Laravel 12", "PostgreSQL", "Redis", "Vue"],
+            "Arquitectura multi-tenant con Laravel. Gestión de facturación electrónica y roles granulares con Jetstream.",
+          tags: ["Laravel", "PHP", "PostgreSQL", "Angular"],
           repo: "#",
           link: "#",
         },
         {
-          title: "Analytics Dashboard",
+          title: "API REST con Express.js",
           description:
-            "Panel de control en tiempo real para e-commerce. Procesa millones de eventos diarios usando colas de Laravel.",
-          tags: ["React", "Tailwind", "AWS Lambda"],
+            "API RESTful escalable para e-commerce. Procesa millones de eventos diarios usando colas y microservicios.",
+          tags: ["Express.js", "Node.js", "MongoDB", "Python"],
           repo: "#",
           link: "#",
         },
         {
-          title: "Auth Microservice",
+          title: "App Mobile Flutter",
           description:
-            "Servicio de autenticación centralizado JWT. Dockerizado y orquestado con Kubernetes para alta disponibilidad.",
-          tags: ["PHP 8.3", "Docker", "K8s"],
+            "Aplicación móvil multiplataforma con Flutter. Integración con APIs REST y sincronización offline.",
+          tags: ["Flutter", "Dart", "REST API", "Firebase"],
           repo: "#",
           link: "#",
         },
@@ -1008,12 +1008,12 @@
       let matches = 0;
 
       const gameIcons = [
-        "server",
-        "code-2",
-        "terminal",
-        "database",
-        "container",
-        "layout",
+        "code-2",    // PHP
+        "server",    // Laravel
+        "terminal",  // Express.js
+        "code-2",    // Python
+        "layout",    // Angular
+        "smartphone", // Flutter
       ];
 
       function initGame() {
@@ -1184,7 +1184,7 @@
           skillsData,
           projectsData,
         });
-        const systemPrompt = `Eres un asistente útil y profesional para el portafolio de Yoseth Dev. Stack: Laravel 12, PHP 8.3, React. Responde brevemente en español. CONTEXTO: ${contextData}`;
+        const systemPrompt = `Eres un asistente útil y profesional para el portafolio de Yoseth Dev. Stack: PHP, Laravel, Express.js, Python, Angular, Flutter. Responde brevemente en español. CONTEXTO: ${contextData}`;
         const reply = await callGemini(text, systemPrompt);
         document.getElementById("chat-loading").remove();
         addMessage(reply.replace(/\*\*/g, ""), "assistant");
